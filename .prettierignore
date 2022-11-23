@@ -1,0 +1,18 @@
+# General
+.prettierignore
+.husky
+.gitignore
+CHANGELOG.md
+
+# The graph
+generated
+build
+tests/.bin
+schema.graphql
+subgraph.template.yaml
+subgraph.yaml
+
+# JS
+node_modules
+yarn.lock
+yarn-error.log

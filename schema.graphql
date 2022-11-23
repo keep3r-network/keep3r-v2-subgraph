@@ -1,0 +1,34 @@
+type Transaction @entity {
+  "transaction.hash-transaction.index"
+  id: ID!
+  "The event name / call stacktrace"
+  event: String!
+  "The transaction sender"
+  from: Bytes!
+  "Transaction hash"
+  hash: Bytes!
+  "The transaction index"
+  index: BigInt!
+  "Address that received the transaction"
+  to: Bytes!
+  "Ether value sent in the transaction"
+  value: BigInt!
+  "Timestamp when the transaction was executed"
+  timestamp: BigInt!
+  "Block number"
+  blockNumber: BigInt!
+}
+
+type Token @entity {
+  "Token address"
+  id: ID!
+  "Name of the Token"
+  name: String!
+  "Symbol of the Token"
+  symbol: String!
+  "Decimals"
+  decimals: Int!
+  "Magnitude"
+  magnitude: BigInt!
+}
+

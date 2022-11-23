@@ -1,0 +1,26 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Keep3rV2
+    network: {{network}}
+    source:
+      startBlock: {{keep3rV2StartBlock}}
+      address: '{{keep3rV2}}'
+      abi: Keep3rV2
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/keep3rV2.ts
+      entities:
+        - Keep3rV2
+        - Token
+        - Transaction
+      abis:
+        - name: Keep3rV2
+          file: ./abis/Keep3rV2.json
+      eventHandlers:
+        - event: Bonding(indexed address,indexed address,uint256)
+          handler: handleBonding

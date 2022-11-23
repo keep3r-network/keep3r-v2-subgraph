@@ -1,0 +1,45 @@
+{
+  "name": "keep3r-v2-subgraph",
+  "version": "1.0.0",
+  "license": "",
+  "contributors": [
+    {
+      "name": "0xged",
+      "email": "0xged@mean.finance",
+      "url": "https://github.com/0xged"
+    }
+  ],
+  "scripts": {
+    "build:ethereum": "yarn prepare:ethereum && yarn codegen && graph build",
+    "codegen": "rm -rf generated && graph codegen",
+    "deploy:ethereum": "yarn build:ethereum && graph deploy --debug --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ 0xged/keep3r-v2-canary",
+    "deploy:ethereum:stable": "yarn build:ethereum && graph deploy --debug --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ 0xged/keep3r-v2",
+    "lint:check": "cross-env prettier --check './**'",
+    "lint:fix": "sort-package-json && cross-env prettier --write './**'",
+    "prepare": "husky install",
+    "prepare:ethereum": "mustache config/ethereum.json subgraph.template.yaml > subgraph.yaml",
+    "release": "standard-version",
+    "test": "graph test"
+  },
+  "lint-staged": {
+    "*.{js,css,md,ts,sol}": "prettier --write",
+    "*.sol": "cross-env solhint --fix 'solidity/**/*.sol'",
+    "package.json": "sort-package-json"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.36.1",
+    "@graphprotocol/graph-ts": "0.29.0",
+    "mustache": "4.2.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "17.3.0",
+    "@commitlint/config-conventional": "17.3.0",
+    "husky": "8.0.2",
+    "lint-staged": "13.0.3",
+    "matchstick-as": "0.5.0",
+    "pinst": "3.0.0",
+    "prettier": "2.8.0",
+    "sort-package-json": "2.1.0",
+    "standard-version": "9.5.0"
+  }
+}
