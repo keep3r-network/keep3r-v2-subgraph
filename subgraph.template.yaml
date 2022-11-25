@@ -18,9 +18,19 @@ dataSources:
         - Keep3rV2
         - Token
         - Transaction
+        - Bond
+        - BondAction
       abis:
         - name: Keep3rV2
           file: ./abis/Keep3rV2.json
+        - name: ERC20Detailed
+          file: ./abis/ERC20Detailed.json
       eventHandlers:
         - event: Bonding(indexed address,indexed address,uint256)
           handler: handleBonding
+        - event: Activation(indexed address,indexed address,uint256)
+          handler: handleActivation
+        - event: Unbonding(indexed address,indexed address,uint256)
+          handler: handleUnbonding
+        - event: Withdrawal(indexed address,indexed address,uint256)
+          handler: handleWithdrawal

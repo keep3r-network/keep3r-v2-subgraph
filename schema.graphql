@@ -1,3 +1,48 @@
+
+type Keeper @entity {
+  "Keeper's address"
+  id: ID!
+  "Bonds"
+  bonds: [Bond!]! @derivedFrom(field: "keeper")
+}
+
+enum TYPE_OF_BOND_ACTION {
+  BOND
+  ACTIVATE
+  UNBOND
+  WITHDRAW
+}
+
+type Bond @entity {
+  "keeper.id-token.id"
+  id: ID!
+  "Keeper"
+  keeper: Keeper!
+  "Token being bonded"
+  token: Token!
+  "bonded"
+  bonded: BigInt!
+  "History"
+  history: [BondAction!]! @derivedFrom(field: "bond")
+}
+
+type BondAction @entity {
+  "tx.hash-bond.id"
+  id: ID!
+  "Bond"
+  bond: Bond!
+  "Type of action"
+  action: TYPE_OF_BOND_ACTION!
+  "amount"
+  amount: BigInt!
+  "transaction"
+  transaction: Transaction!
+  "createdAtBlock"
+  createdAtBlock: BigInt!
+  "createdAtTimestamp"
+  createdAtTimestamp: BigInt!
+}
+
 type Transaction @entity {
   "transaction.hash-transaction.index"
   id: ID!
