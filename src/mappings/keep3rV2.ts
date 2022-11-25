@@ -11,21 +11,21 @@ import {
 } from '../../generated/Keep3rV2/Keep3rV2';
 
 export function handleBonding(event: BondingEvent): void {
-  log.debug('[Keep3rV2Handler] Received bonding event', []);
+  log.info('[Keep3rV2Handler] Received bonding event', []);
   const keeper = keeperLibrary.getOrCreate(event.params._keeper);
   const transaction = transactionLibrary.getOrCreateFromEvent(event, 'bonding');
   bondLibrary.handleBonding(keeper, event, transaction);
 }
 
 export function handleActivation(event: ActivationEvent): void {
-  log.debug('[Keep3rV2Handler] Received activation event', []);
+  log.info('[Keep3rV2Handler] Received activation event', []);
   const keeper = keeperLibrary.getByAddress(event.params._keeper);
   const transaction = transactionLibrary.getOrCreateFromEvent(event, 'activation');
   bondLibrary.handleActivation(keeper, event, transaction);
 }
 
 export function handleUnbonding(event: UnbondingEvent): void {
-  log.debug('[Keep3rV2Handler] Received unbonding event', []);
+  log.info('[Keep3rV2Handler] Received unbonding event', []);
   // An unbonding can be from a keeper, or a job so we need to check it
   const transaction = transactionLibrary.getOrCreateFromEvent(event, 'unbonding');
   if (keeperLibrary.existsByAddress(event.params._keeperOrJob)) {
@@ -35,7 +35,7 @@ export function handleUnbonding(event: UnbondingEvent): void {
 }
 
 export function handleWithdrawal(event: WithdrawalEvent): void {
-  log.debug('[Keep3rV2Handler] Received withdrawal event', []);
+  log.info('[Keep3rV2Handler] Received withdrawal event', []);
   const keeper = keeperLibrary.getByAddress(event.params._keeper);
   const transaction = transactionLibrary.getOrCreateFromEvent(event, 'withdrawal');
   bondLibrary.handleWithdrawal(keeper, event, transaction);

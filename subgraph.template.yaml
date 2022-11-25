@@ -3,6 +3,31 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
+    name: KLPFactory
+    network: {{network}}
+    source:
+      startBlock: {{KLPFactoryStartBlock}}
+      address: '{{KLPFactory}}'
+      abi: KLPFactory
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/klp.ts
+      entities:
+        - Token
+        - Transaction
+      abis:
+        - name: KLPFactory
+          file: ./abis/KLPFactory.json
+        - name: KLP
+          file: ./abis/KLP.json
+        - name: ERC20Detailed
+          file: ./abis/ERC20Detailed.json
+      eventHandlers:
+        - event: PairCreated(address,address)
+          handler: handlePairCreated
+  - kind: ethereum/contract
     name: Keep3rV2
     network: {{network}}
     source:
@@ -16,10 +41,10 @@ dataSources:
       file: ./src/mappings/keep3rV2.ts
       entities:
         - Keep3rV2
-        - Token
-        - Transaction
         - Bond
         - BondAction
+        - Token
+        - Transaction
       abis:
         - name: Keep3rV2
           file: ./abis/Keep3rV2.json
@@ -34,3 +59,26 @@ dataSources:
           handler: handleUnbonding
         - event: Withdrawal(indexed address,indexed address,uint256)
           handler: handleWithdrawal
+templates:
+  - name: KLP
+    kind: ethereum/contract
+    network: {{network}}
+    source:
+      abi: KLP
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      file: ./src/mappings/klp.ts
+      entities:
+        - Token
+        - Transaction
+      abis:
+        - name: KLP
+          file: ./abis/KLP.json
+      callHandlers:
+        - function: mint(uint256,uint256,uint256,uint256,address)
+          handler: handleMint
+        - function: burn(uint128,uint256,uint256,address)
+          handler: handleBurn
+
