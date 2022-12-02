@@ -1,9 +1,57 @@
-
 type Keeper @entity {
   "Keeper's address"
   id: ID!
   "Bonds"
   bonds: [Bond!]! @derivedFrom(field: "keeper")
+}
+
+type KLP @entity {
+  "token0.id-token1.id"
+  id: ID!
+  "token"
+  token: Token!
+  "token0"
+  token0: Token!
+  "token1"
+  token1: Token!
+  "uniswap pool"
+  pool: Bytes!
+  "history of mints and burns"
+  history: [KLPAction!]! @derivedFrom(field: "klp")
+  "transaction"
+  transaction: Transaction!
+  "createdAtBlock"
+  createdAtBlock: BigInt!
+  "createdAtTimestamp"
+  createdAtTimestamp: BigInt!
+}
+
+enum TYPE_OF_KLP_ACTION {
+  MINT
+  BURN
+}
+
+type KLPAction @entity {
+  "tx.hash-index"
+  id: ID!
+  "user"
+  user: Bytes!
+  "klp"
+  klp: KLP!
+  "action"
+  action: TYPE_OF_KLP_ACTION!
+  "amount of token0 sent to create lp / received when burning lp"
+  amount0: BigInt # Has to be optional because this data only comes on the mint callback
+  "amount of token1 sent to create lp / received when burning lp"
+  amount1: BigInt # Has to be optional because this data only comes on the mint callback
+  "total minted liquidity / total burnt liquidity"
+  liquidity: BigInt!
+  "transaction"
+  transaction: Transaction!
+  "createdAtBlock"
+  createdAtBlock: BigInt!
+  "createdAtTimestamp"
+  createdAtTimestamp: BigInt!
 }
 
 enum TYPE_OF_BOND_ACTION {
