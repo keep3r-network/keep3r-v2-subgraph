@@ -1,5 +1,5 @@
 import { BigInt, Address, log } from '@graphprotocol/graph-ts';
-import { ZERO_BI } from '../utils/constants';
+import { KEEP3R_V2_ADDRESS, ZERO_BI } from '../utils/constants';
 import * as tokenLibrary from '../utils/token';
 import { Bond, BondAction, Keeper, Token, Transaction } from '../../generated/schema';
 
@@ -43,7 +43,7 @@ function handleAction(keeper: Keeper, tokenAddress: Address, action: string, amo
   const token = tokenLibrary.getOrCreate(tokenAddress);
   const bond = getOrCreateBond(keeper, token);
   const id = bond.id.concat(transaction.id);
-  const keep3r = Keep3rV2.bind(Address.fromString('0xeb02addCfD8B773A5FFA6B9d1FE99c566f8c44CC'));
+  const keep3r = Keep3rV2.bind(KEEP3R_V2_ADDRESS);
   bond.bonded = keep3r.bonds(Address.fromString(keeper.id), tokenAddress);
   let bondAction = BondAction.load(id);
   if (bondAction == null) {

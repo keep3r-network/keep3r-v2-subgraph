@@ -1,5 +1,6 @@
 import { BigInt, BigDecimal, Address } from '@graphprotocol/graph-ts';
 
+export const KEEP3R_V2_ADDRESS = Address.fromString('0xeb02addCfD8B773A5FFA6B9d1FE99c566f8c44CC');
 export const ADDRESS_ZERO = Address.fromString('0x0000000000000000000000000000000000000000');
 
 export const ZERO_BI = BigInt.fromI32(0);

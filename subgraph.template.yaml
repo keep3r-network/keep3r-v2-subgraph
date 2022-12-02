@@ -51,6 +51,12 @@ dataSources:
         - name: ERC20Detailed
           file: ./abis/ERC20Detailed.json
       eventHandlers:
+        - event: JobAddition(indexed address,indexed address)
+          handler: handleAddJob
+        - event: LiquidityAddition(indexed address,indexed address,indexed address,uint256)
+          handler: handleAddLiquidityToJob
+        - event: LiquidityWithdrawal(indexed address,indexed address,indexed address,uint256)
+          handler: handleLiquidityWithdrawal
         - event: Bonding(indexed address,indexed address,uint256)
           handler: handleBonding
         - event: Activation(indexed address,indexed address,uint256)

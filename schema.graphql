@@ -1,9 +1,6 @@
-type Keeper @entity {
-  "Keeper's address"
-  id: ID!
-  "Bonds"
-  bonds: [Bond!]! @derivedFrom(field: "keeper")
-}
+# --------------------------------------------------------------------------
+#                                    KLPs                                   
+# --------------------------------------------------------------------------
 
 type KLP @entity {
   "token0.id-token1.id"
@@ -54,6 +51,60 @@ type KLPAction @entity {
   createdAtTimestamp: BigInt!
 }
 
+# --------------------------------------------------------------------------
+#                               Jobs and works                              
+# --------------------------------------------------------------------------
+
+# enum TYPE_OF_JOB_ACTION {
+#   ADD_KLPS
+#   REMOVE_KLPS
+#   ADD_JOB_CREDITS
+#   REMOVE_JOB_CREDITS
+#   WORK
+# }
+
+# interface JobAction {
+#   action: 
+# }
+
+type Job @entity {
+  "contract address"
+  id: ID!
+  "owner's address"
+  owner: Bytes!
+  # "jobs history"
+  # history: 
+}
+
+enum TYPE_OF_JOB_REWARD {
+  LIQUIDITY_CREDITS
+  TOKEN_CREDITS
+}
+
+type Work @entity {
+  "tx.hash-tx.index"
+  id: ID!
+  "job"
+  job: Job!
+  "keeper"
+  keeper: Keeper!
+  "type of job reward"
+  typeOfReward: TYPE_OF_JOB_REWARD!
+}
+
+# --------------------------------------------------------------------------
+#                              Keepers and bonds                            
+# --------------------------------------------------------------------------
+
+type Keeper @entity {
+  "Keeper's address"
+  id: ID!
+  "Bonds"
+  bonds: [Bond!]! @derivedFrom(field: "keeper")
+  "Work history"
+  workHistory: [Work!]! @derivedFrom(field: "keeper")
+}
+
 enum TYPE_OF_BOND_ACTION {
   BOND
   ACTIVATE
@@ -90,6 +141,10 @@ type BondAction @entity {
   "createdAtTimestamp"
   createdAtTimestamp: BigInt!
 }
+
+# --------------------------------------------------------------------------
+#                                    Misc                                   
+# --------------------------------------------------------------------------
 
 type Transaction @entity {
   "transaction.hash-transaction.index"
