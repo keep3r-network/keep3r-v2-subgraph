@@ -6,7 +6,7 @@ import * as tokenLibrary from './token';
 
 export function create(event: PairCreatedEvent, transaction: Transaction): KLP {
   const id = event.params._pairManager.toHexString();
-  log.info('[KLP] Get or create {}', [id]);
+  log.info('[KLP] Create {}', [id]);
   const klpContract = KLPContract.bind(event.params._pairManager);
   const klpToken = tokenLibrary.getOrCreate(event.params._pairManager);
   const token0 = tokenLibrary.getOrCreate(klpContract.token0());
@@ -25,7 +25,7 @@ export function create(event: PairCreatedEvent, transaction: Transaction): KLP {
 
 export function getKLPActionById(id: string): KLPAction {
   const klpAction = KLPAction.load(id);
-  if (klpAction == null) throw Error('KLPAction not found');
+  if (klpAction == null) throw new Error('KLPAction not found');
   return klpAction;
 }
 

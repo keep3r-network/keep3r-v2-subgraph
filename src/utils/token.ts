@@ -4,7 +4,7 @@ import { ERC20Detailed } from '../../generated/Keep3rV2/ERC20Detailed';
 
 export function getById(id: string): Token {
   const token = Token.load(id);
-  if (token == null) throw Error('Token not found');
+  if (token == null) throw new Error('Token not found');
   return token;
 }
 

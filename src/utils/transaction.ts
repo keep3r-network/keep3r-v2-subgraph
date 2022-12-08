@@ -26,7 +26,7 @@ function _getOrCreate(ethTransaction: ethereum.Transaction, block: ethereum.Bloc
     transaction.from = ethTransaction.from;
     transaction.hash = ethTransaction.hash;
     transaction.index = ethTransaction.index;
-    transaction.to = ethTransaction.to as Bytes;
+    if (ethTransaction.to) transaction.to = ethTransaction.to as Bytes;
     transaction.value = ethTransaction.value;
     transaction.timestamp = block.timestamp;
     transaction.blockNumber = block.number;

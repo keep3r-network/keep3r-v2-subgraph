@@ -70,15 +70,37 @@ type KLPAction @entity {
 type Job @entity {
   "contract address"
   id: ID!
-  "owner's address"
-  owner: Bytes!
+  "liquidities"
+  liquidities: [JobLiquidity!]! @derivedFrom(field: "job")
+  "liquidities ids"
+  liquiditiesIds: [String!]!
   # "jobs history"
   # history: 
+  "owner's address"
+  # Optional parameter, since we might need to use the job before it was added / created
+  owner: Bytes
+  "Optional parameter, migrated to"
+  migratedTo: Job
+  "transaction"
+  # Optional parameter, since we might need to use the job before it was added / created
+  transaction: Transaction
+  "createdAtBlock"
+  # Optional parameter, since we might need to use the job before it was added / created
+  createdAtBlock: BigInt
+  "createdAtTimestamp"
+  # Optional parameter, since we might need to use the job before it was added / created
+  createdAtTimestamp: BigInt
 }
 
-enum TYPE_OF_JOB_REWARD {
-  LIQUIDITY_CREDITS
-  TOKEN_CREDITS
+type JobLiquidity @entity {
+  "job.id-klp.id"
+  id: ID!
+  "job"
+  job: Job!
+  "klp"
+  klp: KLP!
+  "amount"
+  amount: BigInt!
 }
 
 type Work @entity {
@@ -88,8 +110,6 @@ type Work @entity {
   job: Job!
   "keeper"
   keeper: Keeper!
-  "type of job reward"
-  typeOfReward: TYPE_OF_JOB_REWARD!
 }
 
 # --------------------------------------------------------------------------
@@ -158,7 +178,7 @@ type Transaction @entity {
   "The transaction index"
   index: BigInt!
   "Address that received the transaction"
-  to: Bytes!
+  to: Bytes
   "Ether value sent in the transaction"
   value: BigInt!
   "Timestamp when the transaction was executed"

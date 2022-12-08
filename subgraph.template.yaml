@@ -1,4 +1,4 @@
-specVersion: 0.0.4
+specVersion: 0.0.5
 schema:
   file: ./schema.graphql
 dataSources:
@@ -11,7 +11,7 @@ dataSources:
       abi: KLPFactory
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       file: ./src/mappings/klp.ts
       entities:
@@ -36,7 +36,7 @@ dataSources:
       abi: Keep3rV2
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       file: ./src/mappings/keep3rV2.ts
       entities:
@@ -50,19 +50,28 @@ dataSources:
           file: ./abis/Keep3rV2.json
         - name: ERC20Detailed
           file: ./abis/ERC20Detailed.json
+      callHandlers:
+        - function: unbondLiquidityFromJob(address,address,uint256)
+          handler: handleUnbondLiquidityFromJob
+        - function: unbond(address,uint256)
+          handler: handleUnbondingFromKeeper
       eventHandlers:
         - event: JobAddition(indexed address,indexed address)
           handler: handleAddJob
+        - event: JobMigrationSuccessful(address,indexed address)
+          handler: handleJobMigrationSuccessful
         - event: LiquidityAddition(indexed address,indexed address,indexed address,uint256)
           handler: handleAddLiquidityToJob
         - event: LiquidityWithdrawal(indexed address,indexed address,indexed address,uint256)
-          handler: handleLiquidityWithdrawal
+          handler: handleLiquidityWithdrawalFromJob
+        - event: TokenCreditAddition(indexed address,indexed address,indexed address,uint256)
+          handler: handleAddTokenCreditsToJob
+        - event: TokenCreditWithdrawal(indexed address,indexed address,indexed address,uint256)
+          handler: handleWithdrawTokenCreditsFromJob
         - event: Bonding(indexed address,indexed address,uint256)
           handler: handleBonding
         - event: Activation(indexed address,indexed address,uint256)
           handler: handleActivation
-        - event: Unbonding(indexed address,indexed address,uint256)
-          handler: handleUnbonding
         - event: Withdrawal(indexed address,indexed address,uint256)
           handler: handleWithdrawal
 templates:
@@ -73,7 +82,7 @@ templates:
       abi: KLP
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.6
+      apiVersion: 0.0.7
       language: wasm/assemblyscript
       file: ./src/mappings/klp.ts
       entities:
