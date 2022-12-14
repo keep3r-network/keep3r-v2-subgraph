@@ -14,6 +14,7 @@ export function getOrCreateByAddress(jobAddress: Address): Job {
   if (job == null) {
     job = new Job(id);
     job.liquiditiesIds = new Array();
+    job.creditsIds = new Array();
     job.save();
   }
   return job;

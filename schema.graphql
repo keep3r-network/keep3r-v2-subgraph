@@ -74,6 +74,10 @@ type Job @entity {
   liquidities: [JobLiquidity!]! @derivedFrom(field: "job")
   "liquidities ids"
   liquiditiesIds: [String!]!
+  "credits"
+  credits: [JobCredit!]! @derivedFrom(field: "job")
+  "credits ids"
+  creditsIds: [String!]!
   # "jobs history"
   # history: 
   "owner's address"
@@ -99,6 +103,17 @@ type JobLiquidity @entity {
   job: Job!
   "klp"
   klp: KLP!
+  "amount"
+  amount: BigInt!
+}
+
+type JobCredit @entity {
+  "job.id-klp.id"
+  id: ID!
+  "job"
+  job: Job!
+  "token"
+  token: Token!
   "amount"
   amount: BigInt!
 }

@@ -1,11 +1,6 @@
-import { Address, log, BigInt, dataSource } from '@graphprotocol/graph-ts';
+import { Address, log, BigInt } from '@graphprotocol/graph-ts';
 import { Job, JobLiquidity, Transaction } from '../../generated/schema';
-import {
-  LiquidityAddition as LiquidityAdditionEvent,
-  Unbonding as UnbondingEvent,
-  LiquidityWithdrawal as LiquidityWithdrawalEvent,
-  UnbondLiquidityFromJobCall,
-} from '../../generated/Keep3rV2/Keep3rV2';
+import { LiquidityAddition as LiquidityAdditionEvent, UnbondLiquidityFromJobCall } from '../../generated/Keep3rV2/Keep3rV2';
 import { ZERO_BI } from '../utils/constants';
 
 function getOrCreate(job: Job, liquidity: Address): JobLiquidity {
@@ -36,7 +31,7 @@ export function getByJobAndLiquidityAddress(job: Job, liquidityAddress: Address)
   return getById(buildIdFromJobAndLiquidityAddress(job, liquidityAddress));
 }
 
-export function addLiquidity(job: Job, liquidityAddress: Address, amount: BigInt): JobLiquidity {
+function addLiquidity(job: Job, liquidityAddress: Address, amount: BigInt): JobLiquidity {
   const jobLiquidity = getOrCreate(job, liquidityAddress);
   log.info('[Job-Liquidity] Added liquidity {}', [jobLiquidity.id]);
   if (!job.liquiditiesIds.includes(jobLiquidity.id)) {
@@ -55,7 +50,7 @@ export function addedLiquidity(job: Job, event: LiquidityAdditionEvent, transact
   log.info('[Job-Liquidity] Added liquidity {}', [jobLiquidity.id]);
 }
 
-export function reduceLiquidity(job: Job, liquidityAddress: Address, amount: BigInt): JobLiquidity {
+function reduceLiquidity(job: Job, liquidityAddress: Address, amount: BigInt): JobLiquidity {
   const jobLiquidity = getOrCreate(job, liquidityAddress);
   log.info('[Job-Liquidity] Added liquidity {}', [jobLiquidity.id]);
   jobLiquidity.amount = jobLiquidity.amount.minus(amount);
@@ -67,8 +62,6 @@ export function unbondedLiquidity(job: Job, call: UnbondLiquidityFromJobCall, tr
   const jobLiquidity = reduceLiquidity(job, call.inputs._liquidity, call.inputs._amount);
   log.info('[Job-Liquidity] Unbonded liquidity {}', [jobLiquidity.id]);
 }
-
-export function withdrewLiquidity(): void {}
 
 export function migrated(fromJob: Job, toJob: Job): void {
   log.info('[Job-Liquidity] Migrated from job {} to {}', [fromJob.id, toJob.id]);

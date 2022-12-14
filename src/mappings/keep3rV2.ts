@@ -4,6 +4,7 @@ import * as keeperLibrary from '../utils/keeper';
 import * as keeperBondLibrary from '../utils/keeper-bond';
 import * as jobLibrary from '../utils/job';
 import * as jobLiquidityLibrary from '../utils/job-liquidity';
+import * as jobCreditLibrary from '../utils/job-credit';
 import {
   JobAddition as JobAdditionEvent,
   LiquidityAddition as LiquidityAdditionEvent,
@@ -58,10 +59,16 @@ export function handleJobMigrationSuccessful(event: JobMigrationSuccessfulEvent)
 
 export function handleAddTokenCreditsToJob(event: TokenCreditAdditionEvent): void {
   log.info('[Keep3rV2Handler] Token credits added to job', []);
+  const transaction = transactionLibrary.getOrCreateFromEvent(event, 'Job-TokenCreditsAdded');
+  const job = jobLibrary.getOrCreateByAddress(event.params._job);
+  jobCreditLibrary.addedCredits(job, event, transaction);
 }
 
 export function handleWithdrawTokenCreditsToJob(event: TokenCreditWithdrawalEvent): void {
   log.info('[Keep3rV2Handler] Token credits withdrawn from job', []);
+  const transaction = transactionLibrary.getOrCreateFromEvent(event, 'Job-TokenCreditsWithdrawn');
+  const job = jobLibrary.getOrCreateByAddress(event.params._job);
+  jobCreditLibrary.withdrawnCredits(job, event, transaction);
 }
 
 /* -------------------------------------------------------------------------- */
