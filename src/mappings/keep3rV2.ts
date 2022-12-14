@@ -15,6 +15,7 @@ import {
   TokenCreditAddition as TokenCreditAdditionEvent,
   TokenCreditWithdrawal as TokenCreditWithdrawalEvent,
   JobMigrationSuccessful as JobMigrationSuccessfulEvent,
+  KeeperWork as KeeperWorkEvent,
   UnbondLiquidityFromJobCall,
   UnbondCall,
 } from '../../generated/Keep3rV2/Keep3rV2';
@@ -101,4 +102,16 @@ export function handleWithdrawal(event: WithdrawalEvent): void {
   const keeper = keeperLibrary.getByAddress(event.params._keeper);
   const transaction = transactionLibrary.getOrCreateFromEvent(event, 'Keeper-Withdrawal');
   keeperBondLibrary.handleWithdrawal(keeper, event, transaction);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                   General                                  */
+/* -------------------------------------------------------------------------- */
+
+export function handleWork(event: KeeperWorkEvent): void {
+  log.info('[Keep3rV2Handler] Job worked', []);
+  const transaction = transactionLibrary.getOrCreateFromEvent(event, 'Keeper-Job-Worked');
+  const keeper = keeperLibrary.getOrCreate(event.params._keeper);
+  const job = jobLibrary.getOrCreateByAddress(event.params._job);
+  jobLibrary.worked(keeper, job, event, transaction);
 }

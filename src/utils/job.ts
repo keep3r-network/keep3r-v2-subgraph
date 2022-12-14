@@ -1,7 +1,8 @@
 import { Address, log, BigInt, dataSource } from '@graphprotocol/graph-ts';
-import { Job, Transaction } from '../../generated/schema';
-import { JobAddition as JobAdditionEvent } from '../../generated/Keep3rV2/Keep3rV2';
+import { Job, Keeper, Transaction, Work } from '../../generated/schema';
+import { JobAddition as JobAdditionEvent, KeeperWork as KeeperWorkEvent } from '../../generated/Keep3rV2/Keep3rV2';
 import * as jobLiquidityLibrary from './job-liquidity';
+import { ZERO_BI } from './constants';
 
 /* -------------------------------------------------------------------------- */
 /*                                     Job                                    */
@@ -38,4 +39,25 @@ export function migrated(fromJob: Job, toJob: Job, transaction: Transaction): vo
   log.info('[Jobs] Migrated from job {} to {}', [fromJob.id, toJob.id]);
   fromJob.migratedTo = toJob.id;
   fromJob.save();
+}
+
+export function worked(keeper: Keeper, job: Job, event: KeeperWorkEvent, transaction: Transaction): void {
+  log.info('[Jobs] Worked job {}', [job.id]);
+  const id = job.id.concat('-').concat(transaction.id);
+  const work = new Work(id);
+  work.action = 'WORK';
+  work.job = job.id;
+  work.keeper = keeper.id;
+  work.credit = event.params._credit.toHexString();
+  work.payment = event.params._payment;
+  if (event.receipt) {
+    work.cumulativeGasUsed = event.receipt!.cumulativeGasUsed;
+  } else {
+    // Best effort approach
+    work.cumulativeGasUsed = transaction.gasLimit.minus(event.params._gasLeft).times(transaction.gasPrice);
+  }
+  work.transaction = transaction.id;
+  work.createdAtBlock = transaction.blockNumber;
+  work.createdAtTimestamp = transaction.timestamp;
+  work.save();
 }

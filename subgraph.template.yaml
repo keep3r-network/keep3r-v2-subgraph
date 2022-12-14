@@ -74,6 +74,8 @@ dataSources:
           handler: handleActivation
         - event: Withdrawal(indexed address,indexed address,uint256)
           handler: handleWithdrawal
+        - event: KeeperWork(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleWork
 templates:
   - name: KLP
     kind: ethereum/contract

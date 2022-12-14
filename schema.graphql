@@ -55,17 +55,51 @@ type KLPAction @entity {
 #                               Jobs and works                              
 # --------------------------------------------------------------------------
 
-# enum TYPE_OF_JOB_ACTION {
-#   ADD_KLPS
-#   REMOVE_KLPS
-#   ADD_JOB_CREDITS
-#   REMOVE_JOB_CREDITS
-#   WORK
-# }
+enum TYPE_OF_JOB_ACTION {
+  ADD_KLPS
+  REMOVE_KLPS
+  ADD_JOB_CREDITS
+  REMOVE_JOB_CREDITS
+  WORK
+}
 
-# interface JobAction {
-#   action: 
-# }
+interface JobAction {
+  "job.id-transaction.hash"
+  id: ID!
+  "Job"
+  job: Job!
+  "Type of job action"
+  action: TYPE_OF_JOB_ACTION!
+  "transaction"
+  transaction: Transaction!
+  "createdAtBlock"
+  createdAtBlock: BigInt!
+  "createdAtTimestamp"
+  createdAtTimestamp: BigInt!
+}
+
+type Work implements JobAction @entity {
+  "job.id-transaction.hash"
+  id: ID!
+  "Type of job action"
+  action: TYPE_OF_JOB_ACTION!
+  "Job"
+  job: Job!
+  "Keeper"
+  keeper: Keeper!
+  "The address of the asset in which the keeper is paid"
+  credit: Token!
+  "The amount that has been paid out to the keeper in exchange for working the job"
+  payment: BigInt!
+  "Cumulative gas used (effective gas price * gas used)"
+  cumulativeGasUsed: BigInt!
+  "transaction"
+  transaction: Transaction!
+  "createdAtBlock"
+  createdAtBlock: BigInt!
+  "createdAtTimestamp"
+  createdAtTimestamp: BigInt!
+}
 
 type Job @entity {
   "contract address"
@@ -78,8 +112,8 @@ type Job @entity {
   credits: [JobCredit!]! @derivedFrom(field: "job")
   "credits ids"
   creditsIds: [String!]!
-  # "jobs history"
-  # history: 
+  "jobs history"
+  history: [JobAction!]! @derivedFrom(field: "job")
   "owner's address"
   # Optional parameter, since we might need to use the job before it was added / created
   owner: Bytes
@@ -116,15 +150,6 @@ type JobCredit @entity {
   token: Token!
   "amount"
   amount: BigInt!
-}
-
-type Work @entity {
-  "tx.hash-tx.index"
-  id: ID!
-  "job"
-  job: Job!
-  "keeper"
-  keeper: Keeper!
 }
 
 # --------------------------------------------------------------------------
@@ -196,6 +221,10 @@ type Transaction @entity {
   to: Bytes
   "Ether value sent in the transaction"
   value: BigInt!
+  "Effective gas price"
+  gasPrice: BigInt!
+  "Gas limit"
+  gasLimit: BigInt!
   "Timestamp when the transaction was executed"
   timestamp: BigInt!
   "Block number"

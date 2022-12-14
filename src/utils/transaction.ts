@@ -28,6 +28,8 @@ function _getOrCreate(ethTransaction: ethereum.Transaction, block: ethereum.Bloc
     transaction.index = ethTransaction.index;
     if (ethTransaction.to) transaction.to = ethTransaction.to as Bytes;
     transaction.value = ethTransaction.value;
+    transaction.gasLimit = ethTransaction.gasLimit;
+    transaction.gasPrice = ethTransaction.gasPrice;
     transaction.timestamp = block.timestamp;
     transaction.blockNumber = block.number;
     transaction.event = action;
