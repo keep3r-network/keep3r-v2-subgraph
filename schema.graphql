@@ -55,51 +55,6 @@ type KLPAction @entity {
 #                               Jobs and works                              
 # --------------------------------------------------------------------------
 
-enum TYPE_OF_JOB_ACTION {
-  ADD_KLPS
-  REMOVE_KLPS
-  ADD_JOB_CREDITS
-  REMOVE_JOB_CREDITS
-  WORK
-}
-
-interface JobAction {
-  "job.id-transaction.hash"
-  id: ID!
-  "Job"
-  job: Job!
-  "Type of job action"
-  action: TYPE_OF_JOB_ACTION!
-  "transaction"
-  transaction: Transaction!
-  "createdAtBlock"
-  createdAtBlock: BigInt!
-  "createdAtTimestamp"
-  createdAtTimestamp: BigInt!
-}
-
-type Work implements JobAction @entity {
-  "job.id-transaction.hash"
-  id: ID!
-  "Type of job action"
-  action: TYPE_OF_JOB_ACTION!
-  "Job"
-  job: Job!
-  "Keeper"
-  keeper: Keeper!
-  "The address of the asset in which the keeper is paid"
-  credit: Token!
-  "The amount that has been paid out to the keeper in exchange for working the job"
-  payment: BigInt!
-  "Cumulative gas used (effective gas price * gas used)"
-  cumulativeGasUsed: BigInt!
-  "transaction"
-  transaction: Transaction!
-  "createdAtBlock"
-  createdAtBlock: BigInt!
-  "createdAtTimestamp"
-  createdAtTimestamp: BigInt!
-}
 
 type Job @entity {
   "contract address"
@@ -150,6 +105,94 @@ type JobCredit @entity {
   token: Token!
   "amount"
   amount: BigInt!
+}
+
+# --------------------------------------------------------------------------
+#                                 Job actions                               
+# --------------------------------------------------------------------------
+
+enum TYPE_OF_JOB_ACTION {
+  ADD_LIQUIDITY
+  REMOVE_LIQUIDITY
+  ADD_CREDITS
+  REMOVE_CREDITS
+  WORK
+}
+
+interface JobAction {
+  "job.id-transaction.hash"
+  id: ID!
+  "Job"
+  job: Job!
+  "Type of job action"
+  action: TYPE_OF_JOB_ACTION!
+  "transaction"
+  transaction: Transaction!
+  "createdAtBlock"
+  createdAtBlock: BigInt!
+  "createdAtTimestamp"
+  createdAtTimestamp: BigInt!
+}
+
+type Work implements JobAction @entity {
+  "job.id-transaction.hash"
+  id: ID!
+  "Type of job action"
+  action: TYPE_OF_JOB_ACTION!
+  "Job"
+  job: Job!
+  "Keeper"
+  keeper: Keeper!
+  "The address of the asset in which the keeper is paid"
+  credit: Token!
+  "The amount that has been paid out to the keeper in exchange for working the job"
+  payment: BigInt!
+  "Cumulative gas used (effective gas price * gas used)"
+  cumulativeGasUsed: BigInt!
+  "transaction"
+  transaction: Transaction!
+  "createdAtBlock"
+  createdAtBlock: BigInt!
+  "createdAtTimestamp"
+  createdAtTimestamp: BigInt!
+}
+
+type LiquidityAction implements JobAction @entity {
+  "job.id-transaction.hash"
+  id: ID!
+  "Type of job action"
+  action: TYPE_OF_JOB_ACTION!
+  "Job"
+  job: Job!
+  "Klp"
+  klp: KLP!
+  "Amount"
+  amount: BigInt!
+  "transaction"
+  transaction: Transaction!
+  "createdAtBlock"
+  createdAtBlock: BigInt!
+  "createdAtTimestamp"
+  createdAtTimestamp: BigInt!
+}
+
+type CreditAction implements JobAction @entity {
+  "job.id-transaction.hash"
+  id: ID!
+  "Type of job action"
+  action: TYPE_OF_JOB_ACTION!
+  "Job"
+  job: Job!
+  "Token"
+  token: Token!
+  "Amount"
+  amount: BigInt!
+  "transaction"
+  transaction: Transaction!
+  "createdAtBlock"
+  createdAtBlock: BigInt!
+  "createdAtTimestamp"
+  createdAtTimestamp: BigInt!
 }
 
 # --------------------------------------------------------------------------

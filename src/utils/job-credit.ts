@@ -1,5 +1,5 @@
 import { Address, log, BigInt } from '@graphprotocol/graph-ts';
-import { Job, JobCredit, Transaction } from '../../generated/schema';
+import { CreditAction, Job, JobCredit, Token, Transaction } from '../../generated/schema';
 import { ZERO_BI } from './constants';
 import {
   TokenCreditAddition as TokenCreditAdditionEvent,
@@ -36,6 +36,19 @@ export function getByJobAndLiquidityAddress(job: Job, tokenAddress: Address): Jo
   return getById(buildIdFromJobAndTokenAddress(job, tokenAddress));
 }
 
+function createAction(job: Job, action: string, tokenAddress: Address, amount: BigInt, transaction: Transaction): void {
+  const id = job.id.concat('-').concat(transaction.id);
+  const creditAction = new CreditAction(id);
+  creditAction.job = job.id;
+  creditAction.action = action;
+  creditAction.token = tokenAddress.toHexString();
+  creditAction.amount = amount;
+  creditAction.transaction = transaction.id;
+  creditAction.createdAtBlock = transaction.blockNumber;
+  creditAction.createdAtTimestamp = transaction.timestamp;
+  creditAction.save();
+}
+
 function addCredit(job: Job, tokenAddress: Address, amount: BigInt): JobCredit {
   const jobCredit = getOrCreate(job, tokenAddress);
   log.info('[Job-Credit] Added credit {}', [jobCredit.id]);
@@ -53,6 +66,7 @@ function addCredit(job: Job, tokenAddress: Address, amount: BigInt): JobCredit {
 export function addedCredits(job: Job, event: TokenCreditAdditionEvent, transaction: Transaction): void {
   const jobCredit = addCredit(job, event.params._token, event.params._amount);
   log.info('[Job-Credit] Added credit {}', [jobCredit.id]);
+  createAction(job, 'ADD_CREDITS', event.params._token, event.params._amount, transaction);
 }
 
 function reduceCredit(job: Job, tokenAddress: Address, amount: BigInt): JobCredit {
@@ -66,6 +80,7 @@ function reduceCredit(job: Job, tokenAddress: Address, amount: BigInt): JobCredi
 export function withdrawnCredits(job: Job, event: TokenCreditWithdrawalEvent, transaction: Transaction): void {
   const jobCredit = reduceCredit(job, event.params._token, event.params._amount);
   log.info('[Job-Credit] Withdrawn credit {}', [jobCredit.id]);
+  createAction(job, 'REMOVE_CREDITS', event.params._token, event.params._amount, transaction);
 }
 
 export function migrated(fromJob: Job, toJob: Job): void {

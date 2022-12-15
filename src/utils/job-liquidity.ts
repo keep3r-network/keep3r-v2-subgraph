@@ -1,5 +1,5 @@
 import { Address, log, BigInt } from '@graphprotocol/graph-ts';
-import { Job, JobLiquidity, Transaction } from '../../generated/schema';
+import { Job, JobLiquidity, LiquidityAction, Transaction } from '../../generated/schema';
 import { LiquidityAddition as LiquidityAdditionEvent, UnbondLiquidityFromJobCall } from '../../generated/Keep3rV2/Keep3rV2';
 import { ZERO_BI } from '../utils/constants';
 
@@ -31,6 +31,19 @@ export function getByJobAndLiquidityAddress(job: Job, liquidityAddress: Address)
   return getById(buildIdFromJobAndLiquidityAddress(job, liquidityAddress));
 }
 
+function createAction(job: Job, action: string, klpAddress: Address, amount: BigInt, transaction: Transaction): void {
+  const id = job.id.concat('-').concat(transaction.id);
+  const creditAction = new LiquidityAction(id);
+  creditAction.job = job.id;
+  creditAction.action = action;
+  creditAction.klp = klpAddress.toHexString();
+  creditAction.amount = amount;
+  creditAction.transaction = transaction.id;
+  creditAction.createdAtBlock = transaction.blockNumber;
+  creditAction.createdAtTimestamp = transaction.timestamp;
+  creditAction.save();
+}
+
 function addLiquidity(job: Job, liquidityAddress: Address, amount: BigInt): JobLiquidity {
   const jobLiquidity = getOrCreate(job, liquidityAddress);
   log.info('[Job-Liquidity] Added liquidity {}', [jobLiquidity.id]);
@@ -48,6 +61,7 @@ function addLiquidity(job: Job, liquidityAddress: Address, amount: BigInt): JobL
 export function addedLiquidity(job: Job, event: LiquidityAdditionEvent, transaction: Transaction): void {
   const jobLiquidity = addLiquidity(job, event.params._liquidity, event.params._amount);
   log.info('[Job-Liquidity] Added liquidity {}', [jobLiquidity.id]);
+  createAction(job, 'ADD_LIQUIDITY', event.params._liquidity, event.params._amount, transaction);
 }
 
 function reduceLiquidity(job: Job, liquidityAddress: Address, amount: BigInt): JobLiquidity {
@@ -61,6 +75,7 @@ function reduceLiquidity(job: Job, liquidityAddress: Address, amount: BigInt): J
 export function unbondedLiquidity(job: Job, call: UnbondLiquidityFromJobCall, transaction: Transaction): void {
   const jobLiquidity = reduceLiquidity(job, call.inputs._liquidity, call.inputs._amount);
   log.info('[Job-Liquidity] Unbonded liquidity {}', [jobLiquidity.id]);
+  createAction(job, 'REMOVE_LIQUIDITY', call.inputs._liquidity, call.inputs._amount, transaction);
 }
 
 export function migrated(fromJob: Job, toJob: Job): void {
