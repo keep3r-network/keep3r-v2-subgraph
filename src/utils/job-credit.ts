@@ -4,6 +4,7 @@ import { ZERO_BI } from './constants';
 import {
   TokenCreditAddition as TokenCreditAdditionEvent,
   TokenCreditWithdrawal as TokenCreditWithdrawalEvent,
+  KeeperWork as KeeperWorkEvent,
 } from '../../generated/Keep3rV2/Keep3rV2';
 import * as tokenLibrary from './token';
 
@@ -37,7 +38,7 @@ export function getByJobAndLiquidityAddress(job: Job, tokenAddress: Address): Jo
 }
 
 function createAction(job: Job, action: string, tokenAddress: Address, amount: BigInt, transaction: Transaction): void {
-  const id = job.id.concat('-').concat(transaction.id);
+  const id = job.id.concat('-').concat(transaction.id).concat('-').concat(action);
   const creditAction = new CreditAction(id);
   creditAction.job = job.id;
   creditAction.action = action;
@@ -81,6 +82,12 @@ export function withdrawnCredits(job: Job, event: TokenCreditWithdrawalEvent, tr
   const jobCredit = reduceCredit(job, event.params._token, event.params._amount);
   log.info('[Job-Credit] Withdrawn credit {}', [jobCredit.id]);
   createAction(job, 'REMOVE_CREDITS', event.params._token, event.params._amount, transaction);
+}
+
+export function consumeCredits(job: Job, event: KeeperWorkEvent, transaction: Transaction): void {
+  const jobCredit = reduceCredit(job, event.params._credit, event.params._payment);
+  log.info('[Job-Credit] Consumed credits {}', [jobCredit.id]);
+  createAction(job, 'CONSUME_CREDITS', event.params._credit, event.params._payment, transaction);
 }
 
 export function migrated(fromJob: Job, toJob: Job): void {

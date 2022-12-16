@@ -19,6 +19,7 @@ import {
   UnbondLiquidityFromJobCall,
   UnbondCall,
 } from '../../generated/Keep3rV2/Keep3rV2';
+import { KEEP3R_V1_ADDRESS } from '../utils/constants';
 
 /* -------------------------------------------------------------------------- */
 /*                                    Jobs                                    */
@@ -114,4 +115,7 @@ export function handleWork(event: KeeperWorkEvent): void {
   const keeper = keeperLibrary.getOrCreate(event.params._keeper);
   const job = jobLibrary.getOrCreateByAddress(event.params._job);
   jobLibrary.worked(keeper, job, event, transaction);
+  if (event.params._credit.toHexString() != KEEP3R_V1_ADDRESS.toHexString()) {
+    jobCreditLibrary.consumeCredits(job, event, transaction);
+  }
 }

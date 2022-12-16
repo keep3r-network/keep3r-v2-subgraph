@@ -43,7 +43,7 @@ export function migrated(fromJob: Job, toJob: Job, transaction: Transaction): vo
 
 export function worked(keeper: Keeper, job: Job, event: KeeperWorkEvent, transaction: Transaction): void {
   log.info('[Jobs] Worked job {}', [job.id]);
-  const id = job.id.concat('-').concat(transaction.id);
+  const id = job.id.concat('-').concat(transaction.id).concat('-WORK');
   const work = new Work(id);
   work.action = 'WORK';
   work.job = job.id;

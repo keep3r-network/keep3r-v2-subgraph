@@ -32,7 +32,7 @@ export function getByJobAndLiquidityAddress(job: Job, liquidityAddress: Address)
 }
 
 function createAction(job: Job, action: string, klpAddress: Address, amount: BigInt, transaction: Transaction): void {
-  const id = job.id.concat('-').concat(transaction.id);
+  const id = job.id.concat('-').concat(transaction.id).concat('-').concat(action);
   const creditAction = new LiquidityAction(id);
   creditAction.job = job.id;
   creditAction.action = action;

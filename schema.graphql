@@ -116,11 +116,12 @@ enum TYPE_OF_JOB_ACTION {
   REMOVE_LIQUIDITY
   ADD_CREDITS
   REMOVE_CREDITS
+  CONSUME_CREDITS
   WORK
 }
 
 interface JobAction {
-  "job.id-transaction.hash"
+  "job.id-transaction.hash-action"
   id: ID!
   "Job"
   job: Job!
