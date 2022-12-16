@@ -72,7 +72,7 @@ export function addedCredits(job: Job, event: TokenCreditAdditionEvent, transact
 
 function reduceCredit(job: Job, tokenAddress: Address, amount: BigInt): JobCredit {
   const jobCredit = getOrCreate(job, tokenAddress);
-  log.info('[Job-Credit] Added credit {}', [jobCredit.id]);
+  log.info('[Job-Credit] Reduce credit {}', [jobCredit.id]);
   jobCredit.amount = jobCredit.amount.minus(amount);
   jobCredit.save();
   return jobCredit;

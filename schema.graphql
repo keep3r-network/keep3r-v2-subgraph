@@ -92,8 +92,12 @@ type JobLiquidity @entity {
   job: Job!
   "klp"
   klp: KLP!
-  "amount"
+  "active amount of klps" 
   amount: BigInt!
+  "amount of klps being unbonded"
+  pendingUnbonds: BigInt!
+  "when are the unbonded klps withdrawable"
+  withdrawableAfter: BigInt!
 }
 
 type JobCredit @entity {
@@ -113,7 +117,8 @@ type JobCredit @entity {
 
 enum TYPE_OF_JOB_ACTION {
   ADD_LIQUIDITY
-  REMOVE_LIQUIDITY
+  UNBOND_LIQUIDITY
+  WITHDRAWN_LIQUIDITY
   ADD_CREDITS
   REMOVE_CREDITS
   CONSUME_CREDITS

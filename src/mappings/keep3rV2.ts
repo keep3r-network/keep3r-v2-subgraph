@@ -57,6 +57,7 @@ export function handleJobMigrationSuccessful(event: JobMigrationSuccessfulEvent)
   const toJob = jobLibrary.getOrCreateByAddress(event.params._toJob);
   jobLibrary.migrated(fromJob, toJob, transaction);
   jobLiquidityLibrary.migrated(fromJob, toJob);
+  jobCreditLibrary.migrated(fromJob, toJob);
 }
 
 export function handleAddTokenCreditsToJob(event: TokenCreditAdditionEvent): void {

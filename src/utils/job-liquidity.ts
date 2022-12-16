@@ -1,7 +1,12 @@
 import { Address, log, BigInt } from '@graphprotocol/graph-ts';
 import { Job, JobLiquidity, LiquidityAction, Transaction } from '../../generated/schema';
-import { LiquidityAddition as LiquidityAdditionEvent, UnbondLiquidityFromJobCall } from '../../generated/Keep3rV2/Keep3rV2';
-import { ZERO_BI } from '../utils/constants';
+import {
+  Keep3rV2,
+  LiquidityAddition as LiquidityAdditionEvent,
+  LiquidityWithdrawal as LiquidityWithdrawalEvent,
+  UnbondLiquidityFromJobCall,
+} from '../../generated/Keep3rV2/Keep3rV2';
+import { KEEP3R_V2_ADDRESS, MAX_BI, ZERO_BI } from '../utils/constants';
 
 function getOrCreate(job: Job, liquidity: Address): JobLiquidity {
   const id = buildIdFromJobAndLiquidityAddress(job, liquidity);
@@ -12,6 +17,8 @@ function getOrCreate(job: Job, liquidity: Address): JobLiquidity {
     jobLiquidity.job = job.id;
     jobLiquidity.klp = liquidity.toHexString();
     jobLiquidity.amount = ZERO_BI;
+    jobLiquidity.pendingUnbonds = ZERO_BI;
+    jobLiquidity.withdrawableAfter = MAX_BI;
     jobLiquidity.save();
   }
   return jobLiquidity;
@@ -66,7 +73,7 @@ export function addedLiquidity(job: Job, event: LiquidityAdditionEvent, transact
 
 function reduceLiquidity(job: Job, liquidityAddress: Address, amount: BigInt): JobLiquidity {
   const jobLiquidity = getOrCreate(job, liquidityAddress);
-  log.info('[Job-Liquidity] Added liquidity {}', [jobLiquidity.id]);
+  log.info('[Job-Liquidity] Reduce liquidity {}', [jobLiquidity.id]);
   jobLiquidity.amount = jobLiquidity.amount.minus(amount);
   jobLiquidity.save();
   return jobLiquidity;
@@ -74,8 +81,21 @@ function reduceLiquidity(job: Job, liquidityAddress: Address, amount: BigInt): J
 
 export function unbondedLiquidity(job: Job, call: UnbondLiquidityFromJobCall, transaction: Transaction): void {
   const jobLiquidity = reduceLiquidity(job, call.inputs._liquidity, call.inputs._amount);
+  const keep3rV2 = Keep3rV2.bind(KEEP3R_V2_ADDRESS);
+  jobLiquidity.pendingUnbonds = jobLiquidity.pendingUnbonds.plus(call.inputs._amount);
+  jobLiquidity.withdrawableAfter = transaction.timestamp.plus(keep3rV2.unbondTime());
+  jobLiquidity.save();
   log.info('[Job-Liquidity] Unbonded liquidity {}', [jobLiquidity.id]);
-  createAction(job, 'REMOVE_LIQUIDITY', call.inputs._liquidity, call.inputs._amount, transaction);
+  createAction(job, 'UNBOND_LIQUIDITY', call.inputs._liquidity, call.inputs._amount, transaction);
+}
+
+export function withdrawnLiquidity(job: Job, event: LiquidityWithdrawalEvent, transaction: Transaction): void {
+  const jobLiquidity = getOrCreate(job, event.params._liquidity);
+  jobLiquidity.pendingUnbonds = ZERO_BI;
+  jobLiquidity.withdrawableAfter = MAX_BI;
+  jobLiquidity.save();
+  log.info('[Job-Liquidity] Withdrawn liquidity {}', [jobLiquidity.id]);
+  createAction(job, 'WITHDRAWN_LIQUIDITY', event.params._liquidity, event.params._amount, transaction);
 }
 
 export function migrated(fromJob: Job, toJob: Job): void {
