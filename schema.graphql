@@ -228,8 +228,12 @@ type Bond @entity {
   keeper: Keeper!
   "Token being bonded"
   token: Token!
-  "bonded"
+  "active bonds"
   bonded: BigInt!
+  "amount of tokens being unbonded"
+  pendingUnbonds: BigInt!
+  "when are the unbonded tokens withdrawable"
+  withdrawableAfter: BigInt!
   "History"
   history: [BondAction!]! @derivedFrom(field: "bond")
 }

@@ -48,6 +48,9 @@ export function handleUnbondLiquidityFromJob(call: UnbondLiquidityFromJobCall): 
 
 export function handleLiquidityWithdrawalFromJob(event: LiquidityWithdrawalEvent): void {
   log.info('[Keep3rV2Handler] Liquidity withdrawn from job {}', [event.params._job.toHexString()]);
+  const transaction = transactionLibrary.getOrCreateFromEvent(event, 'Job-WithdrawingLiquidity');
+  const job = jobLibrary.getOrCreateByAddress(event.params._job);
+  jobLiquidityLibrary.withdrawnLiquidity(job, event, transaction);
 }
 
 export function handleJobMigrationSuccessful(event: JobMigrationSuccessfulEvent): void {

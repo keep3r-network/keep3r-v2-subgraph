@@ -1,5 +1,5 @@
 import { BigInt, Address, log } from '@graphprotocol/graph-ts';
-import { KEEP3R_V2_ADDRESS, ZERO_BI } from './constants';
+import { KEEP3R_V2_ADDRESS, MAX_BI, ZERO_BI } from './constants';
 import * as tokenLibrary from './token';
 import { Bond, BondAction, Keeper, Token, Transaction } from '../../generated/schema';
 
@@ -25,6 +25,8 @@ function getOrCreateBond(keeper: Keeper, token: Token): Bond {
     bond.keeper = keeper.id;
     bond.token = token.id;
     bond.bonded = ZERO_BI;
+    bond.pendingUnbonds = ZERO_BI;
+    bond.withdrawableAfter = MAX_BI;
     bond.save();
   }
   return bond;
@@ -40,7 +42,7 @@ export function getById(id: string): Bond {
   return bond;
 }
 
-function handleAction(keeper: Keeper, tokenAddress: Address, action: string, amount: BigInt, transaction: Transaction): void {
+function handleAction(keeper: Keeper, tokenAddress: Address, action: string, amount: BigInt, transaction: Transaction): Bond {
   const token = tokenLibrary.getOrCreate(tokenAddress);
   const bond = getOrCreateBond(keeper, token);
   const id = bond.id.concat(transaction.id);
@@ -57,6 +59,7 @@ function handleAction(keeper: Keeper, tokenAddress: Address, action: string, amo
     bondAction.createdAtTimestamp = transaction.timestamp;
     bondAction.save();
   }
+  return bond;
 }
 
 export function handleBonding(keeper: Keeper, bondingEvent: BondingEvent, transaction: Transaction): void {
@@ -71,10 +74,17 @@ export function handleActivation(keeper: Keeper, activationEvent: ActivationEven
 
 export function handleUnbonding(keeper: Keeper, call: UnbondCall, transaction: Transaction): void {
   log.info('[KeeperBond] Handle unbonding event', []);
-  handleAction(keeper, call.inputs._bonding, 'UNBOND', call.inputs._amount, transaction);
+  const bond = handleAction(keeper, call.inputs._bonding, 'UNBOND', call.inputs._amount, transaction);
+  const keep3rV2 = Keep3rV2.bind(KEEP3R_V2_ADDRESS);
+  bond.pendingUnbonds = bond.pendingUnbonds.plus(call.inputs._amount);
+  bond.withdrawableAfter = transaction.timestamp.plus(keep3rV2.unbondTime());
+  bond.save();
 }
 
 export function handleWithdrawal(keeper: Keeper, withdrawingEvent: WithdrawalEvent, transaction: Transaction): void {
   log.info('[KeeperBond] Handle withdrawing event', []);
-  handleAction(keeper, withdrawingEvent.params._bond, 'WITHDRAW', withdrawingEvent.params._amount, transaction);
+  const bond = handleAction(keeper, withdrawingEvent.params._bond, 'WITHDRAW', withdrawingEvent.params._amount, transaction);
+  bond.pendingUnbonds = ZERO_BI;
+  bond.withdrawableAfter = MAX_BI;
+  bond.save();
 }
