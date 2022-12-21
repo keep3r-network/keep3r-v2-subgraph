@@ -18,7 +18,6 @@ function getOrCreate(job: Job, liquidity: Address): JobLiquidity {
     jobLiquidity.klp = liquidity.toHexString();
     jobLiquidity.amount = ZERO_BI;
     jobLiquidity.pendingUnbonds = ZERO_BI;
-    jobLiquidity.withdrawableAfter = MAX_BI;
     jobLiquidity.save();
   }
   return jobLiquidity;
@@ -92,7 +91,7 @@ export function unbondedLiquidity(job: Job, call: UnbondLiquidityFromJobCall, tr
 export function withdrawnLiquidity(job: Job, event: LiquidityWithdrawalEvent, transaction: Transaction): void {
   const jobLiquidity = getOrCreate(job, event.params._liquidity);
   jobLiquidity.pendingUnbonds = ZERO_BI;
-  jobLiquidity.withdrawableAfter = MAX_BI;
+  jobLiquidity.withdrawableAfter = null;
   jobLiquidity.save();
   log.info('[Job-Liquidity] Withdrawn liquidity {}', [jobLiquidity.id]);
   createAction(job, 'WITHDRAWN_LIQUIDITY', event.params._liquidity, event.params._amount, transaction);

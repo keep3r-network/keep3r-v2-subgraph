@@ -97,7 +97,7 @@ type JobLiquidity @entity {
   "amount of klps being unbonded"
   pendingUnbonds: BigInt!
   "when are the unbonded klps withdrawable"
-  withdrawableAfter: BigInt!
+  withdrawableAfter: BigInt
 }
 
 type JobCredit @entity {
@@ -233,7 +233,7 @@ type Bond @entity {
   "amount of tokens being unbonded"
   pendingUnbonds: BigInt!
   "when are the unbonded tokens withdrawable"
-  withdrawableAfter: BigInt!
+  withdrawableAfter: BigInt
   "History"
   history: [BondAction!]! @derivedFrom(field: "bond")
 }

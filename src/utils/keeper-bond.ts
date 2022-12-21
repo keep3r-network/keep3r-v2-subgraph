@@ -26,7 +26,6 @@ function getOrCreateBond(keeper: Keeper, token: Token): Bond {
     bond.token = token.id;
     bond.bonded = ZERO_BI;
     bond.pendingUnbonds = ZERO_BI;
-    bond.withdrawableAfter = MAX_BI;
     bond.save();
   }
   return bond;
@@ -85,6 +84,6 @@ export function handleWithdrawal(keeper: Keeper, withdrawingEvent: WithdrawalEve
   log.info('[KeeperBond] Handle withdrawing event', []);
   const bond = handleAction(keeper, withdrawingEvent.params._bond, 'WITHDRAW', withdrawingEvent.params._amount, transaction);
   bond.pendingUnbonds = ZERO_BI;
-  bond.withdrawableAfter = MAX_BI;
+  bond.withdrawableAfter = null;
   bond.save();
 }
