@@ -4,10 +4,10 @@ import * as tokenLibrary from './token';
 import { Bond, BondAction, Keeper, Token, Transaction } from '../../generated/schema';
 
 import {
-  Unbonding as UnbondingEvent,
   Bonding as BondingEvent,
   Activation as ActivationEvent,
   Withdrawal as WithdrawalEvent,
+  KeeperWork as KeeperWorkEvent,
   Keep3rV2,
   UnbondCall,
 } from '../../generated/Keep3rV2/Keep3rV2';
@@ -86,4 +86,9 @@ export function handleWithdrawal(keeper: Keeper, withdrawingEvent: WithdrawalEve
   bond.pendingUnbonds = ZERO_BI;
   bond.withdrawableAfter = null;
   bond.save();
+}
+
+export function addReward(keeper: Keeper, workEvent: KeeperWorkEvent, transaction: Transaction): void {
+  log.info('[KeeperBond] Handle work event', []);
+  handleAction(keeper, workEvent.params._credit, 'REWARDED', workEvent.params._payment, transaction);
 }

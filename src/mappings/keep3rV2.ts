@@ -121,5 +121,7 @@ export function handleWork(event: KeeperWorkEvent): void {
   jobLibrary.worked(keeper, job, event, transaction);
   if (event.params._credit.toHexString() != KEEP3R_V1_ADDRESS.toHexString()) {
     jobCreditLibrary.consumeCredits(job, event, transaction);
+  } else {
+    keeperBondLibrary.addReward(keeper, event, transaction);
   }
 }

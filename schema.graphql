@@ -219,6 +219,7 @@ enum TYPE_OF_BOND_ACTION {
   ACTIVATE
   UNBOND
   WITHDRAW
+  REWARDED
 }
 
 type Bond @entity {
