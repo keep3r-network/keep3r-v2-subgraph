@@ -39,7 +39,7 @@ jobs:
         run: yarn global add @graphprotocol/graph-cli
 
       - name: Login to hosted service
-        run: graph auth --product hosted-service ${{ secrets.ACCESS_TOKEN }}
+        run: graph auth --product hosted-service ${{ secrets.THEGRAPH_ACCESS_TOKEN }}
 
       - name: Deploy subgraph
         run: yarn deploy:${{ github.event.inputs.network }}
