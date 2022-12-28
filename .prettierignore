@@ -3,6 +3,7 @@
 .husky
 .gitignore
 CHANGELOG.md
+.DS_Store
 
 # The graph
 generated
