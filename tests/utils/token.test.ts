@@ -50,17 +50,6 @@ describe('Token library', () => {
       });
     });
   });
-
-  describe('createProtocolToken', () => {
-    describe('on ethereum', () => {
-      beforeEach(() => {
-        dataSourceMock.setNetwork('mainnet');
-      });
-      test('returns correct token entity', () => {
-        assertProtocolToken(tokenLibrary.createProtocolToken(), 'Ethereum', 'ETH');
-      });
-    });
-  });
 });
 
 /* -------------------------------------------------------------------------- */
