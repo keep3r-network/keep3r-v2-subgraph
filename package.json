@@ -10,8 +10,8 @@
   "scripts": {
     "build:ethereum": "yarn prepare:ethereum && yarn codegen && graph build",
     "codegen": "rm -rf generated && graph codegen",
-    "deploy:ethereum": "yarn build:ethereum && graph deploy --debug --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ 0xged/keep3r-v2-canary",
-    "deploy:ethereum:stable": "yarn build:ethereum && graph deploy --debug --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ 0xged/keep3r-v2",
+    "deploy:ethereum": "yarn build:ethereum && graph deploy --debug --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ keep3r-network/keep3r-v2-canary",
+    "deploy:ethereum:stable": "yarn build:ethereum && graph deploy --debug --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ keep3r-network/keep3r-v2",
     "lint:check": "cross-env prettier --check './**'",
     "lint:fix": "sort-package-json && cross-env prettier --write './**'",
     "prepare": "husky install",
