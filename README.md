@@ -1,7 +1,7 @@
 # Keep3r V2 subgraph
 
-[![Lint](https://github.com/keep3r-network/keep3r-subgraph/actions/workflows/lint.yml/badge.svg)](https://github.com/keep3r-network/keep3r-subgraph/actions/workflows/lint.yml)
-[![Tests](https://github.com/keep3r-network/keep3r-subgraph/actions/workflows/tests.yml/badge.svg)](https://github.com/keep3r-network/keep3r-subgraph/actions/workflows/tests.yml)
+[![Lint](https://github.com/keep3r-network/keep3r-v2-subgraph/actions/workflows/lint.yml/badge.svg)](https://github.com/keep3r-network/keep3r-v2-subgraph/actions/workflows/lint.yml)
+[![Tests](https://github.com/keep3r-network/keep3r-v2-subgraph/actions/workflows/tests.yml/badge.svg)](https://github.com/keep3r-network/keep3r-v2-subgraph/actions/workflows/tests.yml)
 
 This repository aims to create a subgraph that will index basic data about the [Keep3r network](https://keep3r.network/).
 
