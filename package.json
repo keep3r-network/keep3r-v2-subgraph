@@ -1,14 +1,12 @@
 {
   "name": "keep3r-v2-subgraph",
   "version": "1.0.0",
-  "license": "",
-  "contributors": [
-    {
-      "name": "0xged",
-      "email": "0xged@mean.finance",
-      "url": "https://github.com/0xged"
-    }
-  ],
+  "license": "MIT",
+  "author": {
+    "name": "0xged",
+    "email": "0xged@protonmail.com",
+    "url": "https://github.com/0xged"
+  },
   "scripts": {
     "build:ethereum": "yarn prepare:ethereum && yarn codegen && graph build",
     "codegen": "rm -rf generated && graph codegen",
@@ -32,10 +30,10 @@
     "mustache": "4.2.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "17.3.0",
-    "@commitlint/config-conventional": "17.3.0",
+    "@commitlint/cli": "17.4.0",
+    "@commitlint/config-conventional": "17.4.0",
     "cross-env": "7.0.3",
-    "husky": "8.0.2",
+    "husky": "8.0.3",
     "lint-staged": "13.1.0",
     "matchstick-as": "0.5.0",
     "pinst": "3.0.0",
