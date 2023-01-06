@@ -10,7 +10,7 @@
   "scripts": {
     "build:ethereum": "yarn prepare:ethereum && yarn codegen && graph build",
     "codegen": "rm -rf generated && graph codegen",
-    "deploy:ethereum": "yarn build:ethereum && graph deploy --debug --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ keep3r-network/keep3r-network",
+    "deploy:ethereum": "yarn build:ethereum && graph deploy --debug --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ keep3r-network/keep3r-network-canary",
     "deploy:ethereum:stable": "yarn build:ethereum && graph deploy --debug --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ keep3r-network/keep3r-network",
     "lint:check": "cross-env prettier --check './**'",
     "lint:fix": "sort-package-json && cross-env prettier --write './**'",
